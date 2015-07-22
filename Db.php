@@ -24,7 +24,7 @@ class Db extends mysqli{
     public function DbSelect($sql,$key = ''){
         $result = $this->query($sql);
         if($result === false){
-            throw new ServerException('databases error:'.$this->error);
+            throw new Exception('databases error:'.$this->error);
         }
         $lists = [];
         while($row = $result->fetch_array(MYSQLI_ASSOC)){
@@ -56,17 +56,6 @@ class Db extends mysqli{
      * @return insert_id
      */
     public function DbInsert($lists,$table){
-        $this->DbBatchInsert($lists,$table);
-        return $this->insert_id;
-    }
-
-    /**
-     * 数据库插入
-     * @param array $lists 出入数据数组
-     * @param string $table 表名
-     * @return insert_id
-     */
-    private function DbBatchInsert($lists,$table){
         $info = [];
         if(!isset($lists[0]) || !is_array($lists[0])){
             $info[] = $lists;
