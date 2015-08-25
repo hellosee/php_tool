@@ -3,7 +3,10 @@ namespace Baiy;
 
 /**
  * 简单数据库操作封装
+ * @example
+ * <?php
  * $Db = new Db(array('host'=>'','user'=>'','password'=>'','dbname'=>'','port'=>'','charset'=>''))
+ * ?>
  */
 class Db extends \mysqli {
 	public function __construct($config) {
