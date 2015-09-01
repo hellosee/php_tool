@@ -17,12 +17,12 @@ class Db extends \mysqli {
 		$config['charset']  = !isset($config['charset']) ? 'utf-8' : $config['charset'];
 
 		if (!isset($config['dbname'])) {
-			throw new Exception('数据库名称不能为空');
+			throw new \Exception('数据库名称不能为空');
 		}
 
 		parent::__construct($config['host'], $config['user'], $config['password'], $config['dbname'], $config['port']);
 		if ($this->connect_error) {
-			throw new Exception($config['dbname'] . ' 连接错误 ' . $this->connect_errno . ' ' . $this->connect_error);
+			throw new \Exception($config['dbname'] . ' 连接错误 ' . $this->connect_errno . ' ' . $this->connect_error);
 		}
 		$this->set_charset($config['charset']);
 	}
@@ -36,7 +36,7 @@ class Db extends \mysqli {
 	public function DbSelect($sql, $key = '') {
 		$result = $this->query($sql);
 		if ($result === false) {
-			throw new Exception('数据查询错误:[sql:' . $sql . ']' . $this->error);
+			throw new \Exception('数据查询错误:[sql:' . $sql . ']' . $this->error);
 		}
 		$lists = [];
 		while ($row = $result->fetch_array(MYSQLI_ASSOC)) {
