@@ -3,6 +3,12 @@ namespace Baiy;
 
 /**
  * http 请求类
+ * $http = new \Baiy\Http();
+ * POST: $http->post();
+ * GET: $http->get();
+ * 上传: $http->upload();
+ * 获取结果: $http->get_data();
+ * 获取头部: $http->get_header();
  */
 class Http {
 	var $method;
@@ -138,7 +144,7 @@ class Http {
 	}
 
 	function save($file) {
-		dir_create(dirname($file));
+		mkdir(dirname($file),'0777',true);
 		return file_put_contents($file, $this->data);
 	}
 

@@ -3,6 +3,13 @@ namespace Baiy;
 
 /**
  * 缓存类
+ * $cache = new \Baiy\Cache($config);
+ * ===========使用方法=============
+ * 设置:$db->set($name, $value, $expire = 0);
+ * 获取:$db->get($name);
+ * 删除:$db->delete($name);
+ * 清空:$db->flush();
+ * 关闭:$db->close();
  */
 class Cache {
 
@@ -44,6 +51,10 @@ class Cache {
 
 	public function flush() {
 		return $this->handler->flush();
+	}
+
+	public function close() {
+		return $this->handler->close();
 	}
 
 	private function checkName($name) {
