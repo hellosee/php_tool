@@ -9,7 +9,7 @@ class Cache {
 	private $handler;
 
 	public function __construct($type, $option = array()) {
-		switch ($type) {
+		switch (strtolower($type)) {
 			case 'file':
 				$this->handler = new File();
 				break;
@@ -62,11 +62,16 @@ interface Base {
 	public function get($name);
 	public function delete($name);
 	public function flush();
+	public function close();
 }
 
 /**
  * 文件缓存类
- * 配置参数 array('paht'=>'缓存路径','type'=>'serialize|array');
+ * 配置参数
+ * array(
+ * 'paht'=>'缓存路径',
+ * 'type'=>'serialize|array'
+ * );
  */
 class File implements Base {
 	private $path;
@@ -93,10 +98,9 @@ class File implements Base {
 		if ($expire > 0) {
 			$value = array('content' => $value, md5('expire') => time() + $expire);
 		}
-		if($this->type == 'array'){
-			$value = "<?php\nreturn ".var_export($value, true).";\n?>";
-		}
-		else{
+		if ($this->type == 'array') {
+			$value = "<?php\nreturn " . var_export($value, true) . ";\n?>";
+		} else {
 			$value = serialize($value);
 		}
 		file_put_contents($file, $value);
@@ -107,10 +111,9 @@ class File implements Base {
 		$file  = $this->path . self::cacheName($name);
 		$value = '';
 		if (is_file($file)) {
-			if($this->type == 'array'){
+			if ($this->type == 'array') {
 				$cache = include $file;
-			}
-			else{
+			} else {
 				$cache = unserialize(file_get_contents($file));
 			}
 
@@ -148,6 +151,8 @@ class File implements Base {
 		return false;
 	}
 
+	public function close() {}
+
 	/**
 	 * 缓存文件名
 	 */
@@ -171,10 +176,73 @@ class File implements Base {
 	}
 }
 
-class Mencache{
+/**
+ * Mencache 缓存类
+ * 配置参数
+ * array(
+ * "host"=>'127.0.0.1',
+ * "port"=>'11211',
+ * "timeout"=>0,
+ * "persistent"=>false,
+ * "prefix"=>'',
+ * )
+ */
+class Mencache implements Base {
+	private $option = array(
+		"host"       => '127.0.0.1',
+		"port"       => '11211',
+		"timeout"    => 0,
+		"persistent" => false,
+		"prefix"     => '',
+	);
+	private $handler;
 
+	public function init($option = array()) {
+		if (!extension_loaded('memcache')) {
+			throw new \Exception('[memcache] 扩展为安装');
+		}
+		$this->option = array_merge($this->option, $option);
+		$this->connect();
+	}
+
+	private function connect() {
+		$this->handler = new \Memcache;
+		$func = $this->option['persistent'] ? 'pconnect' : 'connect';
+		if ($this->option['timeout']) {
+			$is = $this->handler->$func($this->option['host'], $this->option['port'], $this->option['timeout']);
+		} else {
+			$is = $this->handler->$func($this->option['host'], $this->option['port']);
+		}
+
+		if ($is != true) {
+			throw new \Exception('[memcache] ' . $this->option['host'] . ' 连接失败');
+		}
+	}
+
+	public function set($name, $value, $expire = 0) {
+		$name = $this->options['prefix'] . $name;
+		if ($this->handler->set($name, $value, 0, $expire)) {
+			return true;
+		}
+		return false;
+	}
+
+	public function get($name) {
+		return $this->handler->get($this->options['prefix'].$name);
+	}
+
+	public function delete($name) {
+		return $this->handler->delete($this->options['prefix'].$name);
+	}
+
+	public function flush() {
+		return $this->handler->flush();
+	}
+	public function close(){
+		return $this->handler->close();
+	}
 }
 
-class Mysql{
+class Mysql {
 
 }
