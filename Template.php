@@ -22,7 +22,7 @@ class Template {
 	//模板标识符处理方法(匿名函数)
 	private $tpl_fun;
 
-	public function __construct($option = array(),\Closure $tpl_fun = NULL) {
+	public function __construct($option = array(), \Closure $tpl_fun = NULL) {
 		$this->option = array_merge($this->option, $option);
 		if (empty($this->option['tpl_path'])) {
 			throw new \Exception('模板目录没有设置');
@@ -84,7 +84,7 @@ class Template {
 	 * @param  string $tpl  模板定位符
 	 */
 	public function fetch($tpl = '') {
-		if(!empty($this->tpl_fun)){
+		if (!empty($this->tpl_fun)) {
 			$func = $this->tpl_fun;
 			$tpl = $func($tpl);
 		}
@@ -176,7 +176,7 @@ class Template {
 		//获取模板位置
 		$tpl_path = $this->option['tpl_path'] . $tpl . $this->option['suffix'];
 		if (!is_file($tpl_path)) {
-			throw new \Exception("模板不存在");
+			throw new \Exception("{$tpl_path}模板不存在");
 		}
 		return $tpl_path;
 	}
@@ -242,7 +242,7 @@ class Template {
 		$str = preg_replace("/\<\!\-\-\{(.+?)\}\-\-\>/s", "{\\1}", $str);
 
 		//子模板载入 使用方法 {template('public/head')}
-		$str = preg_replace_callback("/\{template\([\'|\"](.+?)[\'|\"]\)\}/i", function($matche) use($ob){
+		$str = preg_replace_callback("/\{template\([\'|\"](.+?)[\'|\"]\)\}/i", function ($matche) use ($ob) {
 			return $ob->parse(file_get_contents($ob->getTplPath($matche[1])));
 		}, $str);
 
@@ -274,10 +274,10 @@ class Template {
 		$str = preg_replace("/\{\/loop\}/", "<?php } ?>", $str);
 
 		//变量输出 函数执行
+		$str = preg_replace("/\{(\\\$[a-zA-Z0-9_\-\>\[\]\'\"\$\.\x7f-\xff]+)\}/s", "<?=\\1?>", $str);
 		$str = preg_replace("/\{([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
-		$str = preg_replace("/\{\\$([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff:]*\(([^{}]*)\))\}/", "<?php echo \\1;?>", $str);
-		$str = preg_replace("/\{(\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\}/", "<?php echo \\1;?>", $str);
 		$str = preg_replace("/\{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)\}/s", "<?php echo \\1;?>", $str);
+
 		return $str;
 	}
 }
