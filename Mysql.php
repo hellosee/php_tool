@@ -111,8 +111,6 @@ class Mysql {
 	 * @param  string $sql 需要执行的sql语句
 	 */
 	public function query($sql) {
-		print_r($sql);
-		exit();
 		if (empty($sql)) {
 			return false;
 		}
@@ -152,7 +150,7 @@ class Mysql {
 	 * SELECT
 	 */
 	public function select() {
-		$select_sql = 'SELECT {FIELD} FROM 1 {TABLE}{WHERE}{GROUP}{HAVING}{ORDER}{LIMIT}';
+		$select_sql = 'SELECT {FIELD} FROM {TABLE}{WHERE}{GROUP}{HAVING}{ORDER}{LIMIT}';
 		$this->sql  = str_replace(
 			array('{TABLE}', '{FIELD}', '{WHERE}', '{GROUP}', '{HAVING}', '{ORDER}', '{LIMIT}'),
 			array(
