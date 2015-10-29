@@ -4,7 +4,7 @@
 
 ````php
 <?php
-$cache = new \Baiy\Cache($config);
+$cache = new \Baiy\Cache($tye, $config);
 //设置
 $cache->set($name, $value, $expire = 0);
 //获取
