@@ -3,7 +3,7 @@ namespace Baiy;
 
 /**
  * 缓存类
- * $cache = new \Baiy\Cache($config);
+ * $cache = new \Baiy\Cache($type, $config);
  * ===========使用方法=============
  * 设置:$db->set($name, $value, $expire = 0);
  * 获取:$db->get($name);
