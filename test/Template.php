@@ -3,7 +3,7 @@ include 'Init.php';
 
 $option = array(
 		'cache_path' => __DIR__.'/tmp', // 模板缓存路径
-		'tpl_path' => __DIR__.'/template', // 模板路径
+		'tpl_path' => __DIR__.'/tmp/template', // 模板路径
 		'debug' => false,
 	);
 $d = 'index/d';
