@@ -91,7 +91,6 @@ class File implements Base {
 		if (!isset($option['path'])) {
 			throw new \Exception('必须设置缓存路径');
 		}
-
 		if (!is_dir($option['path'])) {
 			mkdir($option['path'], 0777, true);
 		}
