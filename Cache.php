@@ -253,6 +253,10 @@ class Mencache implements Base {
 	}
 }
 
+class Redis {
+
+}
+
 class Mysql {
 
 }
