@@ -16,12 +16,13 @@ namespace Baiy;
  * )
  * ===========使用方法=============
  * 查询:$db->table->field()->where()->group()->having()->order()->limit()->key()->[select|find|count]();
- * 添加:$db->table->data()->[insert|add|replace]();
- * 更新:$db->table->where()->data()->[update|save]();
+ * 添加:$db->table->data()->[insert|replace]();
+ * 更新:$db->table->where()->data()->[update]();
  * 删除:$db->table->where()->delete();
  * 执行SQL:$db->query();
  * 事务:$db->startTrans();$db->commit();$db->rollback();
  * 其他:$db->getLastSql();$db->getError();
+ * 注意:where方法禁止叠加使用
  */
 class Mysql {
 
@@ -115,6 +116,9 @@ class Mysql {
 			return false;
 		}
 
+		// 清空SQL语句选项
+		$this->options = array();
+
 		$this->sql = $sql;
 		try {
 			$this->connect();
@@ -132,8 +136,8 @@ class Mysql {
 	/**
 	 * 统计
 	 */
-	public function count($where = '') {
-		$data = $this->where($where)->field('count(*)')->find();
+	public function count() {
+		$data = $this->field('count(*)')->find();
 		return intval($data['count(*)']);
 	}
 
@@ -195,13 +199,6 @@ class Mysql {
 	}
 
 	/**
-	 * $this->insert() 别名
-	 */
-	public function add($replace = false) {
-		return $this->insert($replace);
-	}
-
-	/**
 	 * 替换插入
 	 * 重载$this->insert() 部分功能
 	 */
@@ -220,15 +217,7 @@ class Mysql {
 		. $this->_parseWhere();
 
 		$this->query($this->sql);
-
 		return $this->db->affected_rows();
-	}
-
-	/**
-	 * 重载$this->update()
-	 */
-	public function save() {
-		return $this->update();
 	}
 
 	/**
@@ -243,7 +232,6 @@ class Mysql {
 		. $this->_parseLimit();
 
 		$this->query($this->sql);
-
 		return $this->db->affected_rows();
 	}
 
@@ -288,8 +276,7 @@ class Mysql {
 	 * table分析
 	 */
 	private function _parseTable() {
-		$table = $this->options['table'];
-		unset($this->options['field']);
+		$table = isset($this->options['table']) ? $this->options['table'] : '';
 		return $this->_filterFieldName($table);
 	}
 
@@ -297,8 +284,7 @@ class Mysql {
 	 * field分析
 	 */
 	private function _parseField() {
-		$field = $this->options['field'];
-		unset($this->options['field']);
+		$field = isset($this->options['field']) ? $this->options['field'] : '';
 		return empty($field) ? '*' : $field;
 	}
 
@@ -306,8 +292,7 @@ class Mysql {
 	 * group分析
 	 */
 	private function _parseGroup() {
-		$group = $this->options['group'];
-		unset($this->options['group']);
+		$group = isset($this->options['group']) ? $this->options['group'] : '';
 		return !empty($group) ? ' GROUP BY ' . $group : '';
 	}
 
@@ -315,8 +300,7 @@ class Mysql {
 	 * where分析
 	 */
 	private function _parseWhere() {
-		$where = $this->options['where'];
-		unset($this->options['where']);
+		$where     = isset($this->options['where']) ? $this->options['where'] : '';
 		$condition = "";
 		if (!empty($where)) {
 			$condition = " WHERE ";
@@ -331,10 +315,6 @@ class Mysql {
 				$condition = "";
 			}
 		}
-		if (empty($condition)) {
-			return "";
-		}
-
 		return $condition;
 	}
 
@@ -342,8 +322,7 @@ class Mysql {
 	 * having分析
 	 */
 	private function _parseHaving() {
-		$having = $this->options['having'];
-		unset($this->options['having']);
+		$having = isset($this->options['having']) ? $this->options['having'] : '';
 		return !empty($having) ? ' HAVING ' . $having : '';
 	}
 
@@ -352,8 +331,7 @@ class Mysql {
 	 * @param string $order
 	 */
 	private function _parseOrder() {
-		$order = $this->options['order'];
-		unset($this->options['order']);
+		$order = isset($this->options['order']) ? $this->options['order'] : '';
 		return !empty($order) ? ' ORDER BY ' . $order : '';
 	}
 
@@ -363,8 +341,7 @@ class Mysql {
 	 * @param string $order
 	 */
 	private function _parseKey() {
-		$key = $this->options['key'];
-		unset($this->options['key']);
+		$key = isset($this->options['key']) ? $this->options['key'] : '';
 		return trim($key);
 	}
 
@@ -373,8 +350,7 @@ class Mysql {
 	 * @param array $data
 	 */
 	private function _parseData($type = 'insert') {
-		$data = $this->options['data'];
-		unset($this->options['data']);
+		$data = isset($this->options['data']) ? $this->options['data'] : '';
 		//插入
 		if ($type == 'insert') {
 			$fields = $values = array();
@@ -408,8 +384,7 @@ class Mysql {
 	 * @param mixed $limit
 	 */
 	private function _parseLimit() {
-		$limit = $this->options['limit'];
-		unset($this->options['limit']);
+		$limit = isset($this->options['limit']) ? $this->options['limit'] : '';
 		return !empty($limit) ? ' LIMIT ' . $limit . ' ' : '';
 	}
 
