@@ -80,7 +80,7 @@ interface Base {
  * 文件缓存类
  * 配置参数
  * array(
- * 'paht'=>'缓存路径',
+ * 'path'=>'缓存路径',
  * 'type'=>'serialize|array'
  * );
  */
