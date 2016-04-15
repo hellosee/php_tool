@@ -1,7 +1,7 @@
 <?php
 namespace Baiy;
 
-Baiy::init();
+//Baiy::init();
 
 /**
  * 初始化类
@@ -18,6 +18,22 @@ class Baiy {
         self::setCharset();
         self::setTimeZone();
 	}
+
+    /**
+     * 设置编码
+     * @param string $charset
+     */
+    public static function setCharset($charset = 'utf-8'){
+        header('Content-type: text/html; charset='.$charset);
+    }
+
+    /**
+     * 设置时区
+     * @param string $time
+     */
+    public static function setTimeZone($time = 'Etc/GMT-8'){
+        date_default_timezone_set($time);
+    }
 
     /**
      * 注册错误处理
@@ -41,22 +57,6 @@ class Baiy {
 			}
 		}
 	}
-
-    /**
-     * 设置编码
-     * @param type $charset
-     */
-    public static function setCharset($charset = 'utf-8'){
-        header('Content-type: text/html; charset='.$charset);
-    }
-
-    /**
-     * 设置时区
-     * @param type $time
-     */
-    public static function setTimeZone($time = 'Etc/GMT-8'){
-        date_default_timezone_set($time);
-    }
 
     /**
      * 致命错误捕获
