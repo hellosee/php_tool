@@ -1,0 +1,7 @@
+{
+  "name": "baiy/php_tool",
+  "description": "常用php工具类",
+  "require": {
+    "php": ">=5.4.0"
+  }
+}
