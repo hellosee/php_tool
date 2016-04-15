@@ -1,7 +1,13 @@
 {
   "name": "baiy/php_tool",
   "description": "常用php工具类",
+  "license": "MIT",
   "require": {
     "php": ">=5.4.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Baiy\\": ""
+    }
   }
 }
